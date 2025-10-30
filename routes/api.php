@@ -1,7 +1,23 @@
 <?php
 
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TournamentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
+use App\Http\Controllers\GameController;
+use App\Http\Controllers\GameResultController;
+
+Route::post('/tournaments', TournamentController::class);
+Route::post('/tournaments/{tournament}/teams', [TeamController::class, 'store']);
+Route::delete('/tournaments/{tournament}/teams/{team}', [TeamController::class, 'destroy']);
+
+Route::post('/tournaments/{tournament}/games', [GameController::class, 'store']);
+Route::delete('/tournaments/{tournament}/games/{game}', [GameController::class, 'destroy']);
+
+Route::post('/games/{game}/result', [GameResultController::class, 'storeResult']);
+Route::post('/games/{game}/unfinalize', [GameResultController::class, 'unfinalize']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
