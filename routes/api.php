@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameResultController;
+use App\Http\Controllers\GameScheduleController;
 
 Route::post('/tournaments', TournamentController::class);
 Route::post('/tournaments/{tournament}/teams', [TeamController::class, 'store']);
@@ -16,9 +17,7 @@ Route::delete('/tournaments/{tournament}/teams/{team}', [TeamController::class, 
 Route::post('/tournaments/{tournament}/games', [GameController::class, 'store']);
 Route::delete('/tournaments/{tournament}/games/{game}', [GameController::class, 'destroy']);
 
+Route::post('/tournaments/{tournament}/schedule/generate', [GameScheduleController::class, 'generate']);
+
 Route::post('/games/{game}/result', [GameResultController::class, 'storeResult']);
 Route::post('/games/{game}/unfinalize', [GameResultController::class, 'unfinalize']);
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
