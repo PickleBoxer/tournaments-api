@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GameResource;
 use App\Models\Tournament;
 use App\Services\ScheduleGeneratorService;
 use Illuminate\Http\JsonResponse;
@@ -22,19 +23,9 @@ class GameScheduleController extends Controller
 
             $games = $tournament->games()
                 ->with(['homeTeam', 'awayTeam'])
-                ->get()
-                ->map(function ($game) {
-                    return [
-                        'match_id' => $game->id,
-                        'home_team' => $game->homeTeam->name,
-                        'away_team' => $game->awayTeam?->name ?? 'BYE',
-                        'court' => $game->court,
-                        'starts_at' => $game->starts_at->toISOString(),
-                        'ends_at' => $game->ends_at->toISOString(),
-                    ];
-                });
+                ->get();
 
-            return response()->json($games, 201);
+            return response()->json(GameResource::collection($games), 201);
         } catch (\InvalidArgumentException $e) {
             return response()->json([
                 'error' => $e->getMessage(),
