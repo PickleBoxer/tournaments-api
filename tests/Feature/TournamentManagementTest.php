@@ -73,7 +73,7 @@ test('validates court range - too many courts', function () {
 });
 
 test('successfully creates tournament with valid data', function () {
-    $startDateTime = now()->addDay()->format('Y-m-d\TH:i:s');
+    $startDateTime = now()->addDay()->toIso8601String();
 
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Summer Championship',
@@ -100,7 +100,7 @@ test('accepts valid court range', function () {
     for ($courts = 1; $courts <= 4; $courts++) {
         $response = $this->postJson('/api/tournaments', [
             'name' => "Tournament {$courts}",
-            'start_datetime' => now()->addDay()->format('Y-m-d\TH:i:s'),
+            'start_datetime' => now()->addDay()->toIso8601String(),
             'match_duration_minutes' => 30,
             'num_courts' => $courts,
         ]);

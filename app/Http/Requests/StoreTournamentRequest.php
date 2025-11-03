@@ -23,7 +23,7 @@ class StoreTournamentRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'start_datetime' => 'required|date|date_format:Y-m-d\TH:i:s',
+            'start_datetime' => 'required|date|date_format:Y-m-d\TH:i:sP',
             'match_duration_minutes' => 'required|integer|min:1',
             'num_courts' => 'required|integer|between:1,4',
         ];
