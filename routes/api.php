@@ -18,9 +18,9 @@ Route::delete('/tournaments/{tournament}/teams/{team}', [TeamController::class, 
 Route::post('/tournaments/{tournament}/games', [GameController::class, 'store']);
 Route::delete('/tournaments/{tournament}/games/{game}', [GameController::class, 'destroy']);
 
-Route::post('/tournaments/{tournament}/schedule/generate', [GameScheduleController::class, 'generate']);
+Route::post('/tournaments/{tournament}/schedule/generate', GameScheduleController::class);
 
-Route::post('/games/{game}/result', [GameResultController::class, 'storeResult']);
-Route::post('/games/{game}/unfinalize', [GameResultController::class, 'unfinalize']);
+Route::post('/games/{game}/result', [GameResultController::class, 'store']);
+Route::post('/games/{game}/unfinalize', [GameResultController::class, 'update']);
 
 Route::get('/tournaments/{tournament}/leaderboard', [LeaderboardController::class, 'show']);

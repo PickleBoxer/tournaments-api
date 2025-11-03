@@ -11,7 +11,7 @@ class GameResultController extends Controller
     /**
      * Store a newly created game result in storage.
      */
-    public function storeResult(Game $game, StoreGameResultRequest $request)
+    public function store(Game $game, StoreGameResultRequest $request)
     {
         if ($game->is_finalized) {
             throw ValidationException::withMessages([
@@ -31,7 +31,7 @@ class GameResultController extends Controller
     /**
      * Unfinalize the specified game.
      */
-    public function unfinalize(Game $game)
+    public function update(Game $game)
     {
         if (!$game->is_finalized) {
             throw ValidationException::withMessages([

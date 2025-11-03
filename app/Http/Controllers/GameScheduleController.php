@@ -15,7 +15,7 @@ class GameScheduleController extends Controller
     /**
      * Generate round-robin schedule for the tournament
      */
-    public function generate(Tournament $tournament): JsonResponse
+    public function __invoke(Tournament $tournament): JsonResponse
     {
         try {
             $this->scheduleGenerator->generate($tournament);
