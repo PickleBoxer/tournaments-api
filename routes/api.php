@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Http\Request;
@@ -21,3 +22,5 @@ Route::post('/tournaments/{tournament}/schedule/generate', [GameScheduleControll
 
 Route::post('/games/{game}/result', [GameResultController::class, 'storeResult']);
 Route::post('/games/{game}/unfinalize', [GameResultController::class, 'unfinalize']);
+
+Route::get('/tournaments/{tournament}/leaderboard', [LeaderboardController::class, 'show']);
