@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,7 +42,10 @@ class Team extends Model
 
     public function hasAnyFinalizedGames(): bool
     {
-        return $this->homeGames()->where('is_finalized', true)->exists()
-            || $this->awayGames()->where('is_finalized', true)->exists();
+        if ($this->homeGames()->where('is_finalized', true)->exists()) {
+            return true;
+        }
+
+        return $this->awayGames()->where('is_finalized', true)->exists();
     }
 }

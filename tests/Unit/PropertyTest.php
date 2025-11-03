@@ -4,7 +4,7 @@ use App\Models\Game;
 use App\Models\Tournament;
 use App\Services\ScheduleGeneratorService;
 
-test('property: all games have different home and away teams', function () {
+test('property: all games have different home and away teams', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -25,7 +25,7 @@ test('property: all games have different home and away teams', function () {
         }
 
         // Generate schedule
-        $service = new ScheduleGeneratorService();
+        $service = new ScheduleGeneratorService;
         $service->generate($tournament);
 
         // Verify invariant: no team plays itself
@@ -39,7 +39,7 @@ test('property: all games have different home and away teams', function () {
     }
 });
 
-test('property: no team plays concurrent games', function () {
+test('property: no team plays concurrent games', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 3,
         'match_duration_minutes' => 30,
@@ -61,13 +61,13 @@ test('property: no team plays concurrent games', function () {
         }
 
         // Generate schedule
-        $service = new ScheduleGeneratorService();
+        $service = new ScheduleGeneratorService;
         $service->generate($tournament);
 
         // Verify invariant: no concurrent games per team
         foreach ($teams as $team) {
             $teamGames = Game::where('tournament_id', $tournament->id)
-                ->where(function ($query) use ($team) {
+                ->where(function ($query) use ($team): void {
                     $query->where('home_team_id', $team->id)
                         ->orWhere('away_team_id', $team->id);
                 })
@@ -80,8 +80,8 @@ test('property: no team plays concurrent games', function () {
 
                 expect($currentGame->ends_at->lte($nextGame->starts_at))
                     ->toBeTrue(
-                        "Concurrent games detected for Team {$team->id} (count {$count}): " .
-                        "Game {$currentGame->id} ends at {$currentGame->ends_at}, " .
+                        "Concurrent games detected for Team {$team->id} (count {$count}): ".
+                        "Game {$currentGame->id} ends at {$currentGame->ends_at}, ".
                         "Game {$nextGame->id} starts at {$nextGame->starts_at}"
                     );
             }
@@ -89,7 +89,7 @@ test('property: no team plays concurrent games', function () {
     }
 });
 
-test('property: all finalized games have non-negative goals', function () {
+test('property: all finalized games have non-negative goals', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -136,7 +136,7 @@ test('property: all finalized games have non-negative goals', function () {
     }
 });
 
-test('property: round robin generates correct number of games', function () {
+test('property: round robin generates correct number of games', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -163,7 +163,7 @@ test('property: round robin generates correct number of games', function () {
         }
 
         // Generate schedule
-        $service = new ScheduleGeneratorService();
+        $service = new ScheduleGeneratorService;
         $service->generate($tournament);
 
         $games = Game::where('tournament_id', $tournament->id)->count();
@@ -175,7 +175,7 @@ test('property: round robin generates correct number of games', function () {
     }
 });
 
-test('property: each team plays exactly n-1 games in round robin', function () {
+test('property: each team plays exactly n-1 games in round robin', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -196,7 +196,7 @@ test('property: each team plays exactly n-1 games in round robin', function () {
         }
 
         // Generate schedule
-        $service = new ScheduleGeneratorService();
+        $service = new ScheduleGeneratorService;
         $service->generate($tournament);
 
         // For even teams: each team plays n-1 games
@@ -206,7 +206,7 @@ test('property: each team plays exactly n-1 games in round robin', function () {
         // Verify each team appears in correct number of games
         foreach ($teams as $team) {
             $teamGames = Game::where('tournament_id', $tournament->id)
-                ->where(function ($query) use ($team) {
+                ->where(function ($query) use ($team): void {
                     $query->where('home_team_id', $team->id)
                         ->orWhere('away_team_id', $team->id);
                 })

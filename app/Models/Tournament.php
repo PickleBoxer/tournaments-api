@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,6 +41,6 @@ class Tournament extends Model
 
     public function canRegenerateSchedule(): bool
     {
-        return !$this->hasAnyFinalizedGames();
+        return ! $this->hasAnyFinalizedGames();
     }
 }

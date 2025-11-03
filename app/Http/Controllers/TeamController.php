@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTeamRequest;
 use App\Models\Team;
 use App\Models\Tournament;
-use App\Http\Requests\StoreTeamRequest;
 use Illuminate\Validation\ValidationException;
 
 class TeamController extends Controller

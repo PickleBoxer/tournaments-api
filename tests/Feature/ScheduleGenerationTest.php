@@ -3,7 +3,7 @@
 use App\Models\Game;
 use App\Models\Tournament;
 
-test('prevents regeneration with finalized games', function () {
+test('prevents regeneration with finalized games', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -32,7 +32,7 @@ test('prevents regeneration with finalized games', function () {
         ->assertJsonPath('error', 'Cannot regenerate schedule: tournament has finalized games');
 });
 
-test('validates no time conflicts', function () {
+test('validates no time conflicts', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 1,
         'match_duration_minutes' => 30,
@@ -53,9 +53,7 @@ test('validates no time conflicts', function () {
     // Verify no team plays at overlapping times
     $teams = $tournament->teams;
     foreach ($teams as $team) {
-        $teamGames = $games->filter(function ($game) use ($team) {
-            return $game->home_team_id === $team->id || $game->away_team_id === $team->id;
-        })->sortBy('starts_at')->values();
+        $teamGames = $games->filter(fn ($game) => $game->home_team_id === $team->id || $game->away_team_id === $team->id)->sortBy('starts_at')->values();
 
         for ($i = 0; $i < $teamGames->count() - 1; $i++) {
             $currentGame = $teamGames[$i];
@@ -67,7 +65,7 @@ test('validates no time conflicts', function () {
     }
 });
 
-test('rejects zero teams', function () {
+test('rejects zero teams', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -80,7 +78,7 @@ test('rejects zero teams', function () {
         ->assertJsonPath('error', 'Cannot generate schedule: tournament must have at least 2 teams');
 });
 
-test('handles single team', function () {
+test('handles single team', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -95,7 +93,7 @@ test('handles single team', function () {
         ->assertJsonPath('error', 'Cannot generate schedule: tournament must have at least 2 teams');
 });
 
-test('handles odd number teams with byes', function () {
+test('handles odd number teams with byes', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -119,35 +117,27 @@ test('handles odd number teams with byes', function () {
     expect($games->count())->toBe(15);
 
     // Games with non-null away team (actual games, not byes)
-    $nonByeGames = $games->filter(function ($game) {
-        return $game->away_team_id !== null;
-    });
+    $nonByeGames = $games->filter(fn ($game) => $game->away_team_id !== null);
     expect($nonByeGames->count())->toBe(10);
 
     // Games with null away team (bye games)
-    $byeGames = $games->filter(function ($game) {
-        return $game->away_team_id === null;
-    });
+    $byeGames = $games->filter(fn ($game) => $game->away_team_id === null);
     expect($byeGames->count())->toBe(5);
 
     // Each team should appear in exactly 5 games (4 real + 1 bye)
     foreach ($teams as $team) {
-        $teamGames = $games->filter(function ($game) use ($team) {
-            return $game->home_team_id === $team->id || $game->away_team_id === $team->id;
-        });
+        $teamGames = $games->filter(fn ($game) => $game->home_team_id === $team->id || $game->away_team_id === $team->id);
 
         expect($teamGames->count())->toBe(5, "Team {$team->id} should appear in exactly 5 games");
     }
 
     // Verify response contains games with 'BYE' for bye games
     $responseData = $response->json();
-    $byeGamesInResponse = collect($responseData)->filter(function ($game) {
-        return $game['away_team'] === 'BYE';
-    });
+    $byeGamesInResponse = collect($responseData)->filter(fn ($game) => $game['away_team'] === 'BYE');
     expect($byeGamesInResponse->count())->toBe(5);
 });
 
-test('handles large team count', function () {
+test('handles large team count', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 4,
         'match_duration_minutes' => 30,
@@ -176,4 +166,3 @@ test('handles large team count', function () {
     // For 20 teams, total games should be (20 * 19) / 2 = 190
     expect($games->count())->toBe(190);
 });
-

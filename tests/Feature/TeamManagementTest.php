@@ -3,7 +3,7 @@
 use App\Models\Game;
 use App\Models\Tournament;
 
-test('prevents deletion with finalized games', function () {
+test('prevents deletion with finalized games', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -33,7 +33,7 @@ test('prevents deletion with finalized games', function () {
         ->assertJsonPath('errors.team.0', 'Cannot delete team: has finalized games.');
 });
 
-test('rejects duplicate team name', function () {
+test('rejects duplicate team name', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -50,7 +50,7 @@ test('rejects duplicate team name', function () {
         ->assertJsonValidationErrors('name');
 });
 
-test('allows team deletion without finalized games', function () {
+test('allows team deletion without finalized games', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -76,7 +76,7 @@ test('allows team deletion without finalized games', function () {
     $response->assertStatus(204);
 });
 
-test('successfully creates team', function () {
+test('successfully creates team', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,

@@ -3,7 +3,7 @@
 use App\Models\Game;
 use App\Models\Tournament;
 
-test('rejects negative goals', function () {
+test('rejects negative goals', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -31,7 +31,7 @@ test('rejects negative goals', function () {
         ->assertJsonValidationErrors('home_goals');
 });
 
-test('rejects negative away goals', function () {
+test('rejects negative away goals', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -59,7 +59,7 @@ test('rejects negative away goals', function () {
         ->assertJsonValidationErrors('away_goals');
 });
 
-test('unfinalize only once', function () {
+test('unfinalize only once', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -104,7 +104,7 @@ test('unfinalize only once', function () {
         ->assertJsonPath('errors.game.0', 'Game has already been unfinalized once.');
 });
 
-test('stores valid result and finalizes game', function () {
+test('stores valid result and finalizes game', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Tournament;
 use App\Http\Requests\StoreTournamentRequest;
+use App\Models\Tournament;
 
 class TournamentController extends Controller
 {

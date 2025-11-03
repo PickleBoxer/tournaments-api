@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Tournament;
@@ -9,15 +11,11 @@ use Illuminate\Http\JsonResponse;
 class LeaderboardController extends Controller
 {
     public function __construct(
-        private LeaderboardCalculatorService $leaderboardCalculator
-    ) {
-    }
+        private readonly LeaderboardCalculatorService $leaderboardCalculator
+    ) {}
 
     /**
      * Get tournament leaderboard
-     *
-     * @param Tournament $tournament
-     * @return JsonResponse
      */
     public function show(Tournament $tournament): JsonResponse
     {

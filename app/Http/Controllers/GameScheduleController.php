@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\GameResource;
@@ -10,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 class GameScheduleController extends Controller
 {
     public function __construct(
-        private ScheduleGeneratorService $scheduleGenerator
+        private readonly ScheduleGeneratorService $scheduleGenerator
     ) {}
 
     /**
@@ -30,7 +32,7 @@ class GameScheduleController extends Controller
             return response()->json([
                 'error' => $e->getMessage(),
             ], 422);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return response()->json([
                 'error' => 'Failed to generate schedule',
             ], 500);

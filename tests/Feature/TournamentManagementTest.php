@@ -1,6 +1,6 @@
 <?php
 
-test('rejects invalid match duration', function () {
+test('rejects invalid match duration', function (): void {
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Test Tournament',
         'start_datetime' => now()->addDay()->toIso8601String(),
@@ -12,7 +12,7 @@ test('rejects invalid match duration', function () {
         ->assertJsonValidationErrors('match_duration_minutes');
 });
 
-test('rejects negative match duration', function () {
+test('rejects negative match duration', function (): void {
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Test Tournament',
         'start_datetime' => now()->addDay()->toIso8601String(),
@@ -24,7 +24,7 @@ test('rejects negative match duration', function () {
         ->assertJsonValidationErrors('match_duration_minutes');
 });
 
-test('rejects invalid datetime format', function () {
+test('rejects invalid datetime format', function (): void {
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Test Tournament',
         'start_datetime' => '2025-13-45',
@@ -36,7 +36,7 @@ test('rejects invalid datetime format', function () {
         ->assertJsonValidationErrors('start_datetime');
 });
 
-test('rejects non datetime string', function () {
+test('rejects non datetime string', function (): void {
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Test Tournament',
         'start_datetime' => 'not a date',
@@ -48,7 +48,7 @@ test('rejects non datetime string', function () {
         ->assertJsonValidationErrors('start_datetime');
 });
 
-test('validates court range - zero courts', function () {
+test('validates court range - zero courts', function (): void {
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Test Tournament',
         'start_datetime' => now()->addDay()->toIso8601String(),
@@ -60,7 +60,7 @@ test('validates court range - zero courts', function () {
         ->assertJsonValidationErrors('num_courts');
 });
 
-test('validates court range - too many courts', function () {
+test('validates court range - too many courts', function (): void {
     $response = $this->postJson('/api/tournaments', [
         'name' => 'Test Tournament',
         'start_datetime' => now()->addDay()->toIso8601String(),
@@ -72,7 +72,7 @@ test('validates court range - too many courts', function () {
         ->assertJsonValidationErrors('num_courts');
 });
 
-test('successfully creates tournament with valid data', function () {
+test('successfully creates tournament with valid data', function (): void {
     $startDateTime = now()->addDay()->toIso8601String();
 
     $response = $this->postJson('/api/tournaments', [
@@ -96,7 +96,7 @@ test('successfully creates tournament with valid data', function () {
     ]);
 });
 
-test('accepts valid court range', function () {
+test('accepts valid court range', function (): void {
     for ($courts = 1; $courts <= 4; $courts++) {
         $response = $this->postJson('/api/tournaments', [
             'name' => "Tournament {$courts}",

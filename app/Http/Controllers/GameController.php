@@ -1,12 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Game;
 use App\Http\Requests\StoreGameRequest;
-use App\Http\Requests\UpdateGameRequest;
-
-
+use App\Models\Game;
 use App\Models\Tournament;
 use Illuminate\Validation\ValidationException;
 
@@ -19,6 +18,7 @@ class GameController extends Controller
     {
         $data = $request->validated();
         $game = $tournament->games()->create($data);
+
         return response()->json($game, 201);
     }
 
@@ -33,6 +33,7 @@ class GameController extends Controller
             ]);
         }
         $game->delete();
+
         return response()->json(null, 204);
     }
 }

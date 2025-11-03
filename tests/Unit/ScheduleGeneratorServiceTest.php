@@ -4,7 +4,7 @@ use App\Models\Game;
 use App\Models\Tournament;
 use App\Services\ScheduleGeneratorService;
 
-test('never creates self games', function () {
+test('never creates self games', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -16,7 +16,7 @@ test('never creates self games', function () {
         $teams[] = $tournament->teams()->create(['name' => "Team {$i}"]);
     }
 
-    $service = new ScheduleGeneratorService();
+    $service = new ScheduleGeneratorService;
     $service->generate($tournament);
 
     $games = Game::where('tournament_id', $tournament->id)->get();
@@ -26,7 +26,7 @@ test('never creates self games', function () {
     }
 });
 
-test('no concurrent games per team', function () {
+test('no concurrent games per team', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -38,12 +38,12 @@ test('no concurrent games per team', function () {
         $teams[] = $tournament->teams()->create(['name' => "Team {$i}"]);
     }
 
-    $service = new ScheduleGeneratorService();
+    $service = new ScheduleGeneratorService;
     $service->generate($tournament);
 
     foreach ($teams as $team) {
         $teamGames = Game::where('tournament_id', $tournament->id)
-            ->where(function ($query) use ($team) {
+            ->where(function ($query) use ($team): void {
                 $query->where('home_team_id', $team->id)
                     ->orWhere('away_team_id', $team->id);
             })
@@ -60,7 +60,7 @@ test('no concurrent games per team', function () {
     }
 });
 
-test('handles odd number teams with byes', function () {
+test('handles odd number teams with byes', function (): void {
     $tournament = Tournament::factory()->create([
         'num_courts' => 2,
         'match_duration_minutes' => 30,
@@ -72,7 +72,7 @@ test('handles odd number teams with byes', function () {
         $teams[] = $tournament->teams()->create(['name' => "Team {$i}"]);
     }
 
-    $service = new ScheduleGeneratorService();
+    $service = new ScheduleGeneratorService;
     $service->generate($tournament);
 
     $games = Game::where('tournament_id', $tournament->id)->get();
@@ -83,7 +83,7 @@ test('handles odd number teams with byes', function () {
     // Each team should appear in exactly 5 games (4 real opponents + 1 bye)
     foreach ($teams as $team) {
         $teamGames = Game::where('tournament_id', $tournament->id)
-            ->where(function ($query) use ($team) {
+            ->where(function ($query) use ($team): void {
                 $query->where('home_team_id', $team->id)
                     ->orWhere('away_team_id', $team->id);
             })
@@ -92,4 +92,3 @@ test('handles odd number teams with byes', function () {
         expect($teamGames)->toBe(5, "Team {$team->id} should appear in exactly 5 games");
     }
 });
-

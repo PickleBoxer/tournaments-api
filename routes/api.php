@@ -1,15 +1,12 @@
 <?php
 
-use App\Http\Controllers\LeaderboardController;
-use App\Http\Controllers\TeamController;
-use App\Http\Controllers\TournamentController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
-
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameResultController;
 use App\Http\Controllers\GameScheduleController;
+use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TournamentController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/tournaments', TournamentController::class);
 Route::post('/tournaments/{tournament}/teams', [TeamController::class, 'store']);

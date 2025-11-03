@@ -52,19 +52,20 @@ class L1DatasetSeeder extends Seeder
                 ->where(function ($query) use ($team1, $team2) {
                     // Match: team1 home, team2 away
                     $query->where(function ($q) use ($team1, $team2) {
-                        $q->whereHas('homeTeam', fn($qt) => $qt->where('name', $team1))
-                          ->whereHas('awayTeam', fn($qt) => $qt->where('name', $team2));
+                        $q->whereHas('homeTeam', fn ($qt) => $qt->where('name', $team1))
+                            ->whereHas('awayTeam', fn ($qt) => $qt->where('name', $team2));
                     })
                     // OR Match: team2 home, team1 away
-                    ->orWhere(function ($q) use ($team1, $team2) {
-                        $q->whereHas('homeTeam', fn($qt) => $qt->where('name', $team2))
-                          ->whereHas('awayTeam', fn($qt) => $qt->where('name', $team1));
-                    });
+                        ->orWhere(function ($q) use ($team1, $team2) {
+                            $q->whereHas('homeTeam', fn ($qt) => $qt->where('name', $team2))
+                                ->whereHas('awayTeam', fn ($qt) => $qt->where('name', $team1));
+                        });
                 })
                 ->first();
 
-            if (!$game) {
+            if (! $game) {
                 $this->command->warn("⚠️  Game not found: {$team1} vs {$team2}");
+
                 continue;
             }
 
@@ -92,7 +93,7 @@ class L1DatasetSeeder extends Seeder
 
         $this->command->info("\n✅ L1 Dataset seeded successfully!");
         $this->command->info("Tournament: {$tournament->name}");
-        $this->command->info("Teams: " . implode(', ', $teams));
-        $this->command->info("Games finalized: " . $tournament->games()->where('is_finalized', true)->count());
+        $this->command->info('Teams: '.implode(', ', $teams));
+        $this->command->info('Games finalized: '.$tournament->games()->where('is_finalized', true)->count());
     }
 }

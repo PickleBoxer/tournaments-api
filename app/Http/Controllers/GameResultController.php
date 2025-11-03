@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Game;
 use App\Http\Requests\StoreGameResultRequest;
+use App\Models\Game;
 use Illuminate\Validation\ValidationException;
 
 class GameResultController extends Controller
@@ -33,7 +35,7 @@ class GameResultController extends Controller
      */
     public function update(Game $game)
     {
-        if (!$game->is_finalized) {
+        if (! $game->is_finalized) {
             throw ValidationException::withMessages([
                 'game' => 'Game is not finalized.',
             ]);

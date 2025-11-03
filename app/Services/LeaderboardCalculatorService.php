@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Tournament;
@@ -9,14 +11,11 @@ class LeaderboardCalculatorService
 {
     /**
      * Calculate tournament leaderboard with advanced tiebreaker rules
-     *
-     * @param Tournament $tournament
-     * @return Collection
      */
     public function calculate(Tournament $tournament): Collection
     {
         // Eager load relationships to avoid N+1 queries
-        $tournament->load(['teams', 'games' => function ($query) {
+        $tournament->load(['teams', 'games' => function ($query): void {
             $query->where('is_finalized', true);
         }]);
 
@@ -43,15 +42,13 @@ class LeaderboardCalculatorService
         // Assign ranks
         return $standings->map(function ($stats, $index) {
             $stats['rank'] = $index + 1;
+
             return $stats;
         });
     }
 
     /**
      * Index games by team ID for fast lookup
-     *
-     * @param Collection $games
-     * @return array
      */
     private function indexGamesByTeam(Collection $games): array
     {
@@ -72,24 +69,14 @@ class LeaderboardCalculatorService
 
     /**
      * Build statistics for all teams
-     *
-     * @param Collection $teams
-     * @param array $gamesIndex
-     * @return Collection
      */
     private function buildTeamStatistics(Collection $teams, array $gamesIndex): Collection
     {
-        return $teams->map(function ($team) use ($gamesIndex) {
-            return $this->calculateSingleTeamStats($team, $this->getTeamGamesFromIndex($team->id, $gamesIndex));
-        });
+        return $teams->map(fn ($team) => $this->calculateSingleTeamStats($team, $this->getTeamGamesFromIndex($team->id, $gamesIndex)));
     }
 
     /**
      * Calculate statistics for a single team
-     *
-     * @param $team
-     * @param Collection $teamGames
-     * @return array
      */
     private function calculateSingleTeamStats($team, Collection $teamGames): array
     {
@@ -108,10 +95,12 @@ class LeaderboardCalculatorService
 
         foreach ($teamGames as $game) {
             // Skip bye games
-            if (!$game->home_team_id || !$game->away_team_id) {
+            if (! $game->home_team_id) {
                 continue;
             }
-
+            if (! $game->away_team_id) {
+                continue;
+            }
             $this->updateStatsFromGame($stats, $game, $team->id);
         }
 
@@ -122,11 +111,6 @@ class LeaderboardCalculatorService
 
     /**
      * Update team stats based on a single game
-     *
-     * @param array $stats
-     * @param $game
-     * @param int $teamId
-     * @return void
      */
     private function updateStatsFromGame(array &$stats, $game, int $teamId): void
     {
@@ -152,10 +136,6 @@ class LeaderboardCalculatorService
 
     /**
      * Get games for a specific team from the index
-     *
-     * @param int $teamId
-     * @param array $gamesIndex
-     * @return Collection
      */
     private function getTeamGamesFromIndex(int $teamId, array $gamesIndex): Collection
     {
@@ -164,10 +144,6 @@ class LeaderboardCalculatorService
 
     /**
      * Apply tiebreaker rules for teams with equal points
-     *
-     * @param Collection $standings
-     * @param Collection $finalizedGames
-     * @return Collection
      */
     private function applyTiebreakers(Collection $standings, Collection $finalizedGames): Collection
     {
@@ -192,10 +168,6 @@ class LeaderboardCalculatorService
 
     /**
      * Apply specific tiebreaker rules in order
-     *
-     * @param Collection $teams
-     * @param Collection $finalizedGames
-     * @return Collection
      */
     private function applyTiebreakerRules(Collection $teams, Collection $finalizedGames): Collection
     {
@@ -208,27 +180,22 @@ class LeaderboardCalculatorService
 
     /**
      * Apply remaining tiebreakers recursively to tied groups
-     *
-     * @param Collection $teams
-     * @param Collection $finalizedGames
-     * @return Collection
      */
     private function applyRemainingTiebreakers(Collection $teams, Collection $finalizedGames): Collection
     {
         $result = collect();
 
         // Group by H2H results (fix: use json_encode for negative numbers)
-        $grouped = $teams->groupBy(function ($team) {
-            return json_encode([
-                $team['h2h_points'] ?? 0,
-                $team['h2h_goal_difference'] ?? 0,
-                $team['h2h_goals_for'] ?? 0,
-            ]);
-        });
+        $grouped = $teams->groupBy(fn ($team) => json_encode([
+            $team['h2h_points'] ?? 0,
+            $team['h2h_goal_difference'] ?? 0,
+            $team['h2h_goals_for'] ?? 0,
+        ]));
 
         foreach ($grouped as $group) {
             if ($group->count() === 1) {
                 $result = $result->concat($group);
+
                 continue;
             }
 
@@ -241,10 +208,6 @@ class LeaderboardCalculatorService
 
     /**
      * Apply goal difference, goals for, and average start time tiebreakers
-     *
-     * @param Collection $teams
-     * @param Collection $finalizedGames
-     * @return Collection
      */
     private function applySequentialTiebreakers(Collection $teams, Collection $finalizedGames): Collection
     {
@@ -257,6 +220,7 @@ class LeaderboardCalculatorService
         foreach ($grouped as $group) {
             if ($group->count() === 1) {
                 $result = $result->concat($group);
+
                 continue;
             }
 
@@ -267,6 +231,7 @@ class LeaderboardCalculatorService
             foreach ($subGrouped as $finalGroup) {
                 if ($finalGroup->count() === 1) {
                     $result = $result->concat($finalGroup);
+
                     continue;
                 }
 
@@ -281,17 +246,13 @@ class LeaderboardCalculatorService
 
     /**
      * Calculate average start time for teams
-     *
-     * @param Collection $teams
-     * @param Collection $finalizedGames
-     * @return Collection
      */
     private function calculateAverageStartTime(Collection $teams, Collection $finalizedGames): Collection
     {
         return $teams->map(function ($teamStats) use ($finalizedGames) {
             $teamGames = $finalizedGames->filter(function ($game) use ($teamStats) {
                 // Skip bye games
-                if (!$game->home_team_id || !$game->away_team_id) {
+                if (! $game->home_team_id || ! $game->away_team_id) {
                     return false;
                 }
 
@@ -302,9 +263,7 @@ class LeaderboardCalculatorService
             if ($teamGames->isEmpty()) {
                 $teamStats['avg_start_time'] = null;
             } else {
-                $avgTimestamp = $teamGames->avg(function ($game) {
-                    return $game->starts_at->timestamp;
-                });
+                $avgTimestamp = $teamGames->avg(fn ($game) => $game->starts_at->timestamp);
                 $teamStats['avg_start_time'] = $avgTimestamp;
             }
 
@@ -314,19 +273,13 @@ class LeaderboardCalculatorService
 
     /**
      * Apply head-to-head tiebreaker
-     *
-     * @param Collection $teams
-     * @param Collection $finalizedGames
-     * @return Collection
      */
     private function applyHeadToHeadTiebreaker(Collection $teams, Collection $finalizedGames): Collection
     {
         $teamIds = $teams->pluck('team_id');
 
         // Extract games between tied teams only
-        $h2hGames = $finalizedGames->filter(function ($game) use ($teamIds) {
-            return $teamIds->contains($game->home_team_id) && $teamIds->contains($game->away_team_id);
-        });
+        $h2hGames = $finalizedGames->filter(fn ($game) => $teamIds->contains($game->home_team_id) && $teamIds->contains($game->away_team_id));
 
         if ($h2hGames->isEmpty()) {
             return $teams;
@@ -338,10 +291,8 @@ class LeaderboardCalculatorService
             $h2hGoalDifference = 0;
             $h2hGoalsFor = 0;
 
-            $teamH2HGames = $h2hGames->filter(function ($game) use ($teamStats) {
-                return $game->home_team_id === $teamStats['team_id'] ||
-                       $game->away_team_id === $teamStats['team_id'];
-            });
+            $teamH2HGames = $h2hGames->filter(fn ($game) => $game->home_team_id === $teamStats['team_id'] ||
+                   $game->away_team_id === $teamStats['team_id']);
 
             foreach ($teamH2HGames as $game) {
                 $isHome = $game->home_team_id === $teamStats['team_id'];

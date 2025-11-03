@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Models\Game;
@@ -8,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin Game
+ *
  * @property-read \App\Models\Team $homeTeam
  * @property-read \App\Models\Team|null $awayTeam
  */
@@ -18,6 +21,7 @@ class GameResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         return [

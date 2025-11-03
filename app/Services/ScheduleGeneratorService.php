@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
-use App\Models\Tournament;
 use App\Models\Game;
 use App\Models\Team;
+use App\Models\Tournament;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use InvalidArgumentException;
 
 class ScheduleGeneratorService
@@ -15,14 +17,12 @@ class ScheduleGeneratorService
     /**
      * Generate complete round-robin game schedule with multi-court support
      *
-     * @param Tournament $tournament
-     * @return void
      * @throws InvalidArgumentException
      */
     public function generate(Tournament $tournament): void
     {
         // Check if regeneration is allowed
-        if (!$tournament->canRegenerateSchedule()) {
+        if (! $tournament->canRegenerateSchedule()) {
             throw new InvalidArgumentException(
                 'Cannot regenerate schedule: tournament has finalized games'
             );
@@ -35,7 +35,7 @@ class ScheduleGeneratorService
             );
         }
 
-        DB::transaction(function () use ($tournament) {
+        DB::transaction(function () use ($tournament): void {
             // Delete existing non-finalized games
             $this->clearExistingSchedule($tournament);
 
@@ -61,9 +61,6 @@ class ScheduleGeneratorService
 
     /**
      * Clear existing non-finalized games
-     *
-     * @param Tournament $tournament
-     * @return void
      */
     private function clearExistingSchedule(Tournament $tournament): void
     {
@@ -74,9 +71,6 @@ class ScheduleGeneratorService
 
     /**
      * Prepare teams array and add bye if needed
-     *
-     * @param Collection $teams
-     * @return array
      */
     private function prepareTeamsArray(Collection $teams): array
     {
@@ -95,7 +89,6 @@ class ScheduleGeneratorService
      * Team 1 is fixed, others rotate clockwise
      * Each team plays every other team exactly once
      *
-     * @param array $teams
      * @return array Array of pairings [home_team_id, away_team_id] (away can be null for bye)
      */
     private function generateRoundRobinPairings(array $teams): array
@@ -136,10 +129,6 @@ class ScheduleGeneratorService
     /**
      * Assign games to courts and time slots ensuring no team conflicts
      * Courts are numbered 1 through num_courts
-     *
-     * @param Tournament $tournament
-     * @param array $pairings
-     * @return void
      */
     private function assignGamesToCourts(Tournament $tournament, array $pairings): void
     {
@@ -205,11 +194,6 @@ class ScheduleGeneratorService
 
     /**
      * Calculate game start time based on slot index
-     *
-     * @param Carbon $baseStartTime
-     * @param int $slotIndex
-     * @param int $matchDurationMinutes
-     * @return Carbon
      */
     private function calculateGameStartTime(
         Carbon $baseStartTime,
