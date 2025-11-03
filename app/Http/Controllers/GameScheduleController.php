@@ -27,7 +27,7 @@ class GameScheduleController extends Controller
                     return [
                         'match_id' => $game->id,
                         'home_team' => $game->homeTeam->name,
-                        'away_team' => $game->awayTeam->name,
+                        'away_team' => $game->awayTeam?->name ?? 'BYE',
                         'court' => $game->court,
                         'starts_at' => $game->starts_at->toISOString(),
                         'ends_at' => $game->ends_at->toISOString(),
