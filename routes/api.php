@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameResultController;
 use App\Http\Controllers\GameScheduleController;
 use App\Http\Controllers\LeaderboardController;
@@ -11,9 +10,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('/tournaments', TournamentController::class);
 Route::post('/tournaments/{tournament}/teams', [TeamController::class, 'store']);
 Route::delete('/tournaments/{tournament}/teams/{team}', [TeamController::class, 'destroy']);
-
-Route::post('/tournaments/{tournament}/games', [GameController::class, 'store']);
-Route::delete('/tournaments/{tournament}/games/{game}', [GameController::class, 'destroy']);
 
 Route::post('/tournaments/{tournament}/schedule/generate', GameScheduleController::class);
 
