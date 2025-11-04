@@ -92,7 +92,6 @@ php artisan test --coverage
    - Team management with validation
    - Schedule generation with edge cases
    - Result management and finalization
-   - Leaderboard calculation with L1 dataset verification
 
 2. **Unit Tests** - Service layer logic tests
    - Schedule generator algorithm
