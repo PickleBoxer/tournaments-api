@@ -22,7 +22,7 @@ test('rejects negative goals', function (): void {
         'ends_at' => now()->addDay()->addMinutes(30),
     ]);
 
-    $response = $this->postJson("/api/games/{$game->id}/result", [
+    $response = $this->postJson("/api/matches/{$game->id}/result", [
         'home_goals' => -1,
         'away_goals' => 2,
     ]);
@@ -50,7 +50,7 @@ test('rejects negative away goals', function (): void {
         'ends_at' => now()->addDay()->addMinutes(30),
     ]);
 
-    $response = $this->postJson("/api/games/{$game->id}/result", [
+    $response = $this->postJson("/api/matches/{$game->id}/result", [
         'home_goals' => 3,
         'away_goals' => -5,
     ]);
@@ -83,7 +83,7 @@ test('unfinalize only once', function (): void {
     ]);
 
     // First unfinalize - should succeed
-    $response = $this->postJson("/api/games/{$game->id}/unfinalize");
+    $response = $this->postJson("/api/matches/{$game->id}/unfinalize");
     $response->assertStatus(200);
 
     $game->refresh();
@@ -98,7 +98,7 @@ test('unfinalize only once', function (): void {
     ]);
 
     // Second unfinalize - should fail
-    $response = $this->postJson("/api/games/{$game->id}/unfinalize");
+    $response = $this->postJson("/api/matches/{$game->id}/unfinalize");
     $response->assertStatus(422)
         ->assertJsonValidationErrors('game')
         ->assertJsonPath('errors.game.0', 'Game has already been unfinalized once.');
@@ -123,7 +123,7 @@ test('stores valid result and finalizes game', function (): void {
         'ends_at' => now()->addDay()->addMinutes(30),
     ]);
 
-    $response = $this->postJson("/api/games/{$game->id}/result", [
+    $response = $this->postJson("/api/matches/{$game->id}/result", [
         'home_goals' => 3,
         'away_goals' => 2,
     ]);

@@ -1,59 +1,171 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Smart Naris - Tournament Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based backend system for managing football tournaments with round-robin scheduling, multiple courts, and comprehensive leaderboard tracking.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- 🏆 **Tournament Management** - Create and configure tournaments with custom settings
+- 👥 **Team Management** - Add/remove teams with unique name validation
+- 📅 **Automatic Scheduling** - Round-robin schedule generation with multi-court support
+- ⚽ **Results Tracking** - Record match results with finalization and unfinalize protection
+- 📊 **Dynamic Leaderboard** - Real-time standings with advanced tiebreaker rules
+- ✅ **Comprehensive Testing** - Unit, feature, and property tests with edge case coverage
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3+
+- Composer
+- Laravel 12
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Clone the Repository
+```bash
+git clone <repository-url>
+cd tournaments-api
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Setup 
+```bash
+composer run setup
+```
 
-## Laravel Sponsors
+### 3. Run Migrations and Seeders
+```bash
+php artisan migrate:fresh --seed
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+This will:
+- Create all required database tables
+- Seed the L1 test dataset (4 teams: A, B, C, D with expected results)
 
-### Premium Partners
+### 6. Start Development Server
+```bash
+composer run dev
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+This command starts both:
+- Laravel API server (`http://127.0.0.1:8000`)
+- Queue listener for background jobs
 
-## Contributing
+## API Documentation
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Interactive Documentation
+Visit the auto-generated API documentation at:
+```
+http://127.0.0.1:8000/docs/api
+```
 
-## Code of Conduct
+This provides:
+- Interactive API explorer (Try It feature enabled)
+- Complete endpoint documentation with request/response examples
+- Automatically generated from your code (powered by Scramble)
+- OpenAPI 3.1 specification available at `/docs/api.json`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Base URL
+```
+http://127.0.0.1:8000/api
+```
 
-## Security Vulnerabilities
+## Testing
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Run All Tests
+```bash
+php artisan test
+```
 
-## License
+### Run Specific Test Suite
+```bash
+php artisan test --testsuite=Feature
+php artisan test --testsuite=Unit
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Run With Coverage
+```bash
+php artisan test --coverage
+```
+
+### Test Categories
+
+1. **Feature Tests** - API endpoint integration tests
+   - Tournament CRUD operations
+   - Team management with validation
+   - Schedule generation with edge cases
+   - Result management and finalization
+   - Leaderboard calculation with L1 dataset verification
+
+2. **Unit Tests** - Service layer logic tests
+   - Schedule generator algorithm
+   - Leaderboard calculator with tiebreakers
+   - Edge case validations
+
+3. **Property Tests** - Invariant verification
+   - No self-matches (team vs itself)
+   - No concurrent matches per team
+   - All results have non-negative goals
+
+## Documentation
+
+- **[DESIGN.md](DESIGN.md)** - Architecture decisions, algorithms, and data flow
+- **[EDGECASES.md](EDGECASES.md)** - Comprehensive edge case documentation with test coverage
+- **[COLLABORATION.md](COLLABORATION.md)** - Tool usage and development process
+
+## Edge Cases Coverage
+
+The system handles 14+ documented edge cases including:
+
+See [EDGECASES.md](EDGECASES.md) for complete details.
+
+## Edge Case Test Coverage Mapping
+
+| Edge Case | Unit Test | Feature Test | Property Test |
+|-----------|-----------|--------------|---------------|
+| Self-game | ✅ | ✅ | ✅ |
+| Concurrent games | ✅ | ✅ | ✅ |
+| Negative goals | ✅ | ✅ | ✅ |
+| Regenerate finalized | - | ✅ | - |
+| Delete with results | - | ✅ | - |
+| Unfinalize twice | - | ✅ | - |
+| Duplicate team name | - | ✅ | - |
+| Zero teams | - | ✅ | - |
+| Single team | - | ✅ | - |
+| Odd teams (bye) | ✅ | ✅ | - |
+| Invalid duration | - | ✅ | - |
+| Invalid datetime | - | ✅ | - |
+| Court range | - | ✅ | - |
+| Large teams | - | ✅ | - |
+
+## Development Workflow
+
+### Start Development Environment
+```bash
+composer run dev
+```
+
+### Run Database Migrations
+```bash
+php artisan migrate
+```
+
+### Fresh Database with Seed Data
+```bash
+php artisan migrate:fresh --seed
+```
+
+### Clear Caches
+```bash
+php artisan optimize:clear
+```
+
+## Troubleshooting
+
+### Migration Errors
+```bash
+php artisan migrate:fresh
+```
+
+### Test Failures
+```bash
+php artisan config:clear
+php artisan test
+```
